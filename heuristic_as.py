@@ -14,9 +14,9 @@
     #########
 
     We assume that each areas have only one sprinkler and the water output are;
-    - area (a) have  2 [L/minutes] 
-    - area (b) have 12 [L/minutes]
-    - area (c) have  4 [L/minutes]
+    - area (a) have  5 [L/m] 
+    - area (b) have 20 [L/m]
+    - area (c) have 13 [L/m]
 
     We assume one tomato tree that take 0.5 [m^2] of space need 3.4 [L] in one day, thus;
     - area (a) need 34.0 [L]
@@ -24,15 +24,10 @@
     - area (c) need 27.2 [L]
 
     We assume that the the system designer installed weather forecast sensor to calculate
-    how much of water needed for irrigation. The precipitation for 1 week is;
-    - Sunday: 0 [mm]
-    - Monday: 0 [mm]
-    - Teusday: 7 [mm]
-    - Wednesday: 0 [mm]
-    - Thursday: 28 [mm]
-    - Friday: 2 [mm]
-    - Saturday: 0 [mm]
-    In Array formatting: [0, 0, 7, 0, 28, 2, 0]
+    how much of water needed for irrigation. The precipitation is randomized
+    between the range of 1-25 [mm] when raining.
+
+    In Array formatting: [x1, x2, x3, x4, x5, x6, x7]
     Liter = (x [mm] / 1000) [m] * y [m^2] * 1000 [L/m^3]  
 
     Extra parameter to create the schedule;
@@ -40,9 +35,42 @@
     - sprinkler operate once for 1 day
 
 """
+# load all necessary library(ies) needed in this program
+import random
+
+# TODO output as csv (low prio)
+# TODO adjustable random number range
+
+# create a random weather forecast that span in one week
+def random_wf():
+
+    # initialize an empty array
+    precipitation = []
+
+    # fill the empty array with 7 randomized precipitation (rain) [mm]
+    for i in range(7):
+
+        # toss the coin, if it is head
+        if (random.randint(0, 1) == 0):
+
+            # not raining
+            precipitation.append(0)
+
+        # else generate random number of precipitation
+        else:
+
+            # raining
+            precipitation.append(random.randint(1, 25))
+
+    # return the result
+    return precipitation
+    
 
 # function to find the optimized sprinkler output based on the weather forecast
-def heuristic_as(sensor_reading, cycle_output, interval_output, activation_time, actuator_spec, out):
+def heuristic_as(sensor_reading, cycle_output, interval_output, activation_time, actuator_spec):
+
+    # initialize an empty array
+    out = []
 
     # if rainfall from the weather forecast didn't exceed the target_out
     if (sum(sensor_reading) <= cycle_output):
@@ -112,10 +140,12 @@ def heuristic_as(sensor_reading, cycle_output, interval_output, activation_time,
                             # swap the next element with 0
                             out[i + k] = 0
 
-        # divide out which is [L] with actuators_s which is [L/h] and multiply by 60 to get minutes
-        print ("  Sprinkler runtime: %s [minute]" % [int(i / actuator_spec * 60) for i in out])
+        # divide out which is [L] with actuators_s which is [L/m] and multiply by 60 to get minutes
+        print ("  Sprinkler runtime: %s [minute]" % [int(i / actuator_spec) for i in out])
         # total volume of water in [L]
         print ("  Total volume: %s [L]" % sum(out))
+        # return the table
+        return out
 
     # if the rainfall exceed the target output for the sprinkler
     else:
@@ -132,51 +162,59 @@ if __name__ == '__main__':
     # time interval for every loop is 1 [day]
     interval2 = 1
     # weather forecast precipitation for 7 [day] # in [mm] format
-    sensor = [0, 0, 7, 0, 28, 2, 0]
+    sensor = random_wf()
     # calculate how many time sprinkler (interval2) will activate in 1 cycle (interval1)
     activation_time = int(interval1 / interval2)
+    # show the user the randomized weather forecast
+    print ("Randomized weather forecast in one week is: %s [mm]" % sensor)
 
+    # result for area a
+    print ("\nSchedule for sprinkler in area (a)")
     # meter square of area
     area_a = 5
-    # actuators capability sprinkler is 20 [L/h]
-    actuator_a = 20
+    # actuators capability sprinkler is 5 [L/m]
+    actuator_a = 5
     # rainfall in [L] based on meter square of area
     sensor_a = [(i * area_a) for i in sensor]
     # total output [L] that actuator (sprinkler) need to meet for every cycle
-    totaloutput_a = 3.4 / 0.5 * area_a * interval1
+    weeklyoutput_a = 3.4 / 0.5 * area_a * interval1
     # spread the target output to each activation time
-    dailyoutput_a = totaloutput_a / activation_time
+    dailyoutput_a = weeklyoutput_a / activation_time
     # initialize an empty array to store the time needed to reach the daily quota
     out_a = []
     # calculate the time needed
-    heuristic_as(sensor_a, totaloutput_a, dailyoutput_a, activation_time, actuator_a, out_a)
+    out_a = heuristic_as(sensor_a, weeklyoutput_a, dailyoutput_a, activation_time, actuator_a)
 
+    # result for area a
+    print ("\nSchedule for sprinkler in area (b)")
     # meter square of area
     area_b = 30
-    # actuators capability sprinkler is 120 [L/h]
-    actuator_b = 120
+    # actuators capability sprinkler is 20 [L/m]
+    actuator_b = 20
     # rainfall in [L] based on meter square of area
     sensor_b = [(i * area_b) for i in sensor]
     # total output [L] that actuator (sprinkler) need to meet for every cycle
-    totaloutput_b = 3.4 / 0.5 * area_b * interval1
+    weeklyoutput_b = 3.4 / 0.5 * area_b * interval1
     # spread the target output to each activation time
-    dailyoutput_b = totaloutput_b / activation_time
+    dailyoutput_b = weeklyoutput_b / activation_time
     # initialize an empty array to store the time needed to reach the daily quota
     out_b = []
     # calculate the time needed
-    heuristic_as(sensor_b, totaloutput_b, dailyoutput_b, activation_time, actuator_b, out_b)
+    out_b = heuristic_as(sensor_b, weeklyoutput_b, dailyoutput_b, activation_time, actuator_b)
 
+    # result for area a
+    print ("\nSchedule for sprinkler in area (c)")
     # meter square of area
     area_c = 10
-    # actuators capability sprinkler is 40 [L/h]
-    actuator_c = 40
+    # actuators capability sprinkler is 13 [L/m]
+    actuator_c = 13
     # rainfall in [L] based on meter square of area
     sensor_c = [(i * area_c) for i in sensor]
     # total output [L] that actuator (sprinkler) need to meet for every cycle
-    totaloutput_c = 3.4 / 0.5 * area_c * interval1
+    weeklyoutput_c = 3.4 / 0.5 * area_c * interval1
     # spread the target output to each activation time
-    dailyoutput_c = totaloutput_c / activation_time
+    dailyoutput_c = weeklyoutput_c / activation_time
     # initialize an empty array to store the time needed to reach the daily quota
     out_c = []
     # calculate the time needed
-    heuristic_as(sensor_c, totaloutput_c, dailyoutput_c, activation_time, actuator_c, out_c)
+    out_c = heuristic_as(sensor_c, weeklyoutput_c, dailyoutput_c, activation_time, actuator_c)
