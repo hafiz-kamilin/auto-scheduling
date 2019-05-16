@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# TODO output as csv (low prio)
+
 """
 [Smart Tomato Farm Problem]
 
@@ -25,10 +30,10 @@
 
     We assume that the the system designer installed weather forecast sensor to calculate
     how much of water needed for irrigation. The precipitation is randomized
-    between the range of 1-25 [mm] when raining.
+    with max precipitation of 40 [mm] in one week.
 
     In Array formatting: [x1, x2, x3, x4, x5, x6, x7]
-    Liter = (x [mm] / 1000) [m] * y [m^2] * 1000 [L/m^3]  
+    To convert precipitation to Liter = (x [mm] / 1000) [m] * y [m^2] * 1000 [L/m^3]  
 
     Extra parameter to create the schedule;
     - the schedule span for 1 week
@@ -38,14 +43,15 @@
 # load all necessary library(ies) needed in this program
 import random
 
-# TODO output as csv (low prio)
-# TODO adjustable random number range
-
 # create a random weather forecast that span in one week
 def random_wf():
 
     # initialize an empty array
     precipitation = []
+    # max total precipitation in one weeks is 40 [mm]
+    max = 40
+    # initialize rain
+    rain = 0
 
     # fill the empty array with 7 randomized precipitation (rain) [mm]
     for i in range(7):
@@ -59,8 +65,22 @@ def random_wf():
         # else generate random number of precipitation
         else:
 
+            # as long max is not 0
+            if (max != 0):
+
+                # randomize the precipitation
+                rain = random.randint(1, max)
+            
+            # else
+            else:
+                
+                # no rain
+                rain = 0
+
+            # update the max ceiling
+            max = max - rain
             # raining
-            precipitation.append(random.randint(1, 25))
+            precipitation.append(rain)
 
     # return the result
     return precipitation
