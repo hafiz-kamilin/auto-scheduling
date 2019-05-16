@@ -11,10 +11,10 @@
     calculation for auto-scheduling methodology is developed.
 
     #############
-    #       # a #        area (a):  5 [m^2]
-    #   b   #####        area (b): 30 [m^2]
-    #       #            area (c): 10 [m^2]
-    ######### 
+    #       # a #
+    #   b   #####        area (a):  5 [m^2]
+    #       #            area (b): 30 [m^2]
+    #########            area (c): 10 [m^2] 
     #   C   # 
     #########
 
@@ -40,7 +40,8 @@
     - sprinkler operate once for 1 day
 
 """
-# load all necessary library(ies) needed in this program
+# load all necessary libraries needed in this program
+import numpy as np
 import random
 
 # create a random weather forecast that span in one week
@@ -90,7 +91,7 @@ def random_wf():
 def heuristic_as(sensor_reading, cycle_output, interval_output, activation_time, actuator_spec):
 
     # initialize an empty array
-    out = []
+    out1 = []
 
     # if rainfall from the weather forecast didn't exceed the target_out
     if (sum(sensor_reading) <= cycle_output):
@@ -99,7 +100,7 @@ def heuristic_as(sensor_reading, cycle_output, interval_output, activation_time,
         for i in range(activation_time):
 
             # find the output needed at that interval
-            out.append(interval_output - sensor_reading[i])
+            out1.append(interval_output - sensor_reading[i])
 
         # normalize the array from negative element
         for i in range(activation_time): 
@@ -109,9 +110,9 @@ def heuristic_as(sensor_reading, cycle_output, interval_output, activation_time,
             k = 0
 
             # if the element is negative
-            if (out[i] < 0):
+            if (out1[i] < 0):
 
-                # loop until the negative element spread out
+                # loop until the negative element spreadout
                 while True:
 
                     try:
@@ -120,22 +121,22 @@ def heuristic_as(sensor_reading, cycle_output, interval_output, activation_time,
                         j += 1
 
                         # if the next element in the array is not negative and bigger or equal with the current element
-                        if ((out[i + j] > 0) and (out[i + j] >= -out[i])):
+                        if ((out1[i + j] > 0) and (out1[i + j] >= -out1[i])):
 
                             # update the next element
-                            out[i + j] = out[i + j] + out[i]
+                            out1[i + j] = out1[i + j] + out1[i]
                             # swap the current element with 0
-                            out[i] = 0
+                            out1[i] = 0
                             # break from the while loop
                             break
 
                         # else if the next element in the array is not negative and smaller than the current element
-                        elif ((out[i + j] > 0) and (out[i + j] < -out[i])):
+                        elif ((out1[i + j] > 0) and (out1[i + j] < -out1[i])):
 
                             # update the current element
-                            out[i] = out[i + j] + out[i]
+                            out1[i] = out1[i + j] + out1[i]
                             # swap the next element with 0
-                            out[i + j] = 0
+                            out1[i + j] = 0
 
                     except:
 
@@ -143,29 +144,32 @@ def heuristic_as(sensor_reading, cycle_output, interval_output, activation_time,
                         k -= 1
 
                         # if the next element in the array is not negative and bigger or equal with the current element
-                        if ((out[i + k] > 0) and (out[i + k] >= -out[i])):
+                        if ((out1[i + k] > 0) and (out1[i + k] >= -out1[i])):
 
                             # update the next element
-                            out[i + k] = out[i + k] + out[i]
+                            out1[i + k] = out1[i + k] + out1[i]
                             # swap the current element with 0
-                            out[i] = 0
+                            out1[i] = 0
                             # break from the while loop
                             break
 
                         # else if the next element in the array is not negative and smaller than the current element
-                        elif ((out[i + k] > 0) and (out[i + k] < -out[i])):
+                        elif ((out1[i + k] > 0) and (out1[i + k] < -out1[i])):
 
                             # update the current element
-                            out[i] = out[i + k] + out[i]
+                            out1[i] = out1[i + k] + out1[i]
                             # swap the next element with 0
-                            out[i + k] = 0
+                            out1[i + k] = 0
 
-        # divide out which is [L] with actuators_s which is [L/m] and multiply by 60 to get minutes
-        print ("  Sprinkler runtime: %s [minute]" % [int(i / actuator_spec) for i in out])
+        # divide out1 which is [L] with actuators_s which is [L/m] and multiply by 60 to get minutes
+        out2 = [(j / actuator_spec) for j in out1]
+        # round up to 2 decimal places
+        out2 = list(np.around(np.array(out2), 2))
+        print ("  Sprinkler runtime: %s [minute]" % out2)
         # total volume of water in [L]
-        print ("  Total volume: %s [L]" % sum(out))
+        print ("  Total volume: %s [L]" % sum(out1))
         # return the table
-        return out
+        return out2
 
     # if the rainfall exceed the target output for the sprinkler
     else:
@@ -182,6 +186,7 @@ if __name__ == '__main__':
     # time interval for every loop is 1 [day]
     interval2 = 1
     # weather forecast precipitation for 7 [day] # in [mm] format
+    # to see if limiter sanitycheck is working random_wf() with [0, 0, 0, 0, 0, 0, 48]
     sensor = random_wf()
     # calculate how many time sprinkler (interval2) will activate in 1 cycle (interval1)
     activation_time = int(interval1 / interval2)
@@ -205,7 +210,7 @@ if __name__ == '__main__':
     # calculate the time needed
     out_a = heuristic_as(sensor_a, weeklyoutput_a, dailyoutput_a, activation_time, actuator_a)
 
-    # result for area a
+    # result for area b
     print ("\nSchedule for sprinkler in area (b)")
     # meter square of area
     area_b = 30
@@ -222,7 +227,7 @@ if __name__ == '__main__':
     # calculate the time needed
     out_b = heuristic_as(sensor_b, weeklyoutput_b, dailyoutput_b, activation_time, actuator_b)
 
-    # result for area a
+    # result for area c
     print ("\nSchedule for sprinkler in area (c)")
     # meter square of area
     area_c = 10
