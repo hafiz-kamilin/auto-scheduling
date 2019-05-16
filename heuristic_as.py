@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# TODO output as csv (low prio)
-
 """
 [Smart Tomato Farm Problem]
 
