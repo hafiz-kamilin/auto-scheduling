@@ -159,13 +159,20 @@ def algorithm_as(sensor_reading, cycle_output, interval_output, activation_time,
                             # swap the next element with 0
                             out1[i + k] = 0
 
-        # divide out1 which is [L] with actuators_s which is [L/m] and multiply by 60 to get minutes
+        # divide out1 which is [L] with actuators_s which is [L/m] and multiply by 60 to get the schedule in minutes
         out2 = [(j / actuator_spec) for j in out1]
         # round up to 2 decimal places
         out2 = list(np.around(np.array(out2), 2))
-        print ("  Sprinkler runtime: %s [minute]" % out2)
+        # unoptimized schedule for the sake of comparison
+        out3 = [(k / actuator_spec) for k in ([interval_output] * 7)]
+        # round up to 2 decimal places
+        out3 = list(np.around(np.array(out3), 2))
+        # show the optimized schedule
+        print ("  Auto-scheduling runtime = %s [minute]\n    Total volume = %s [L]" % (out2, sum(out1)))
+        # compare with the unoptimized schedule
+        print ("  Timing-based runtime = %s [minute]\n    Total volume = %s [L]" % (out3, interval_output * 7))
         # total volume of water in [L]
-        print ("  Total volume: %s [L]" % sum(out1))
+        print ("Saved volume = %s [L]" % (interval_output * 7 - sum(out1)))
         # return the table
         return out2
 
@@ -192,7 +199,7 @@ if __name__ == '__main__':
     print ("Randomized weather forecast in one week is: %s [mm]" % sensor)
 
     # result for area a
-    print ("\nSchedule for sprinkler in area (a)")
+    print ("\nSchedule for sprinkler in area (a):")
     # meter square of area
     area_a = 5
     # actuators capability sprinkler is 5 [L/m]
@@ -209,7 +216,7 @@ if __name__ == '__main__':
     out_a = algorithm_as(sensor_a, weeklyoutput_a, dailyoutput_a, activation_time, actuator_a)
 
     # result for area b
-    print ("\nSchedule for sprinkler in area (b)")
+    print ("\nSchedule for sprinkler in area (b):")
     # meter square of area
     area_b = 30
     # actuators capability sprinkler is 20 [L/m]
@@ -226,7 +233,7 @@ if __name__ == '__main__':
     out_b = algorithm_as(sensor_b, weeklyoutput_b, dailyoutput_b, activation_time, actuator_b)
 
     # result for area c
-    print ("\nSchedule for sprinkler in area (c)")
+    print ("\nSchedule for sprinkler in area (c):")
     # meter square of area
     area_c = 10
     # actuators capability sprinkler is 13 [L/m]
