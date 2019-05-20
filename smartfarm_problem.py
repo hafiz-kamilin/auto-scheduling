@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# load all necessary libraries needed in this program
+import linear_programming
+import random_generator
+
 """
 [Smart Tomato Farm Problem]
 
-    Tomato farm is divided into 3 areas which is a, b and c due to the limitation on area covered by
-    individual sprinkler. To find how long we should run the sprinkler, a linear programming
-    calculation is used to optimize the sprinkler runtime.
+    Tomato farm is divided into 3 areas which is a, b and c due to the limitation on area covered
+    by individual sprinkler. To find how long we should run the sprinkler, a linear
+    programming calculation is used to optimize the sprinkler runtime.
 
     #############
     #       # a #
@@ -16,7 +20,7 @@
     #   C   # 
     #########
 
-    We assume that each areas have only one sprinkler and the water output are;
+    We assume that each areas have only one sprinkler and the sprinkler'S output are;
     - area (a) have  5 [L/m] 
     - area (b) have 20 [L/m]
     - area (c) have 13 [L/m]
@@ -38,57 +42,6 @@
     - sprinkler operate once for 1 day
 
 """
-# load all necessary libraries needed in this program
-import lp_scheduling
-import random
-
-# create a random sensor input for the span of interval1
-def random_wf(interval1, interval2):
-
-    # initialize an empty array
-    precipitation = []
-    # max total precipitation in one weeks is 40 [mm]
-    max = 40
-    # initialize rain
-    rain = 0
-    # initialize counter
-    i = 0
-
-    # fill the empty array with randomized precipitation (rain) [mm]
-    while (i < int(interval1 / interval2)):
-
-        # toss the coin, if it is head
-        if (random.randint(0, 1) == 0):
-
-            # not raining
-            precipitation.append(0)
-
-        # if tail, generate random number of precipitation
-        else:
-
-            # as long max is not 0
-            if (max != 0):
-
-                # randomize the precipitation
-                rain = random.randint(1, max)
-            
-            # else
-            else:
-                
-                # no rain
-                rain = 0
-
-            # update the max ceiling
-            max -= rain
-            # raining
-            precipitation.append(rain)
-
-        # increase the counter
-        i += 1
-
-    # return the result
-    return precipitation
-
 # initiator
 if __name__ == '__main__':
 
@@ -97,7 +50,7 @@ if __name__ == '__main__':
     # time interval for every loop is 1 [day]
     interval2 = 1
     # weather forecast precipitation for 7 [day] # in [mm] format
-    sensor_reading = random_wf(interval1, interval2)
+    sensor_reading = random_generator.sensor(interval1, interval2)
     # show the user the randomized weather forecast
     print ("\nRandomized weather forecast in one week is: %s [mm]" % sensor_reading)
 
@@ -115,7 +68,7 @@ if __name__ == '__main__':
     dailyoutput_a = (3.4 / 0.5 * area_a) / actuator_a
     # schedule daily default output value
     # compute the runtime schedule
-    out_a = lp_scheduling.compute(interval1, interval2, sensor_a, actuator_a, weeklyoutput_a, dailyoutput_a)
+    out_a = linear_programming.compute(interval1, interval2, sensor_a, actuator_a, weeklyoutput_a, dailyoutput_a)
 
     # if out_a return true instead of an array
     if (out_a == True):
@@ -150,7 +103,7 @@ if __name__ == '__main__':
     # spread the target output [minute] to each activation time
     dailyoutput_b = (3.4 / 0.5 * area_b) / actuator_b
     # compute the runtime schedule
-    out_b = lp_scheduling.compute(interval1, interval2, sensor_b, actuator_b, weeklyoutput_b, dailyoutput_b)
+    out_b = linear_programming.compute(interval1, interval2, sensor_b, actuator_b, weeklyoutput_b, dailyoutput_b)
 
     # if out_b return true instead of an array
     if (out_b == True):
@@ -185,7 +138,7 @@ if __name__ == '__main__':
     # spread the target output [minute] to each activation time
     dailyoutput_c = (3.4 / 0.5 * area_c) / actuator_c
     # compute the runtime schedule
-    out_c = lp_scheduling.compute(interval1, interval2, sensor_c, actuator_c, weeklyoutput_c, dailyoutput_c)
+    out_c = linear_programming.compute(interval1, interval2, sensor_c, actuator_c, weeklyoutput_c, dailyoutput_c)
 
     # if out_c return true instead of an array
     if (out_c == True):
