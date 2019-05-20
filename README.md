@@ -11,7 +11,7 @@ This is an example concept that show IoT type of sensors and actuators can be sc
 ## Test run
 
 1. Assuming Python 3 programming environment already configured by the user; execute
-   - `pip install pulp` on Windows with administrative right.
+   - `pip install pulp` on Windows with administrative right or
    - `sudo pip install pulp` on Linux.
 2. Execute `smartfarm_problem.py`, the result will change based on randomized weather forecast.
 
