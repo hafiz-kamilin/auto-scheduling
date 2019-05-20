@@ -5,13 +5,13 @@
 import pulp
 
 # function to generate runtime distribution
-def compute(interval1, interval2, sensor_reading, actuator_spec, cycle_output, interval_output):
+def compute(interval, cycle, sensor_reading, actuator_specification, interval_output, cycle_output):
 
-    # calculate how many time interval2 will be activated in 1 interval1
-    activation_time = int(interval1 / interval2)
+    # calculate how many time cycle will be activated in 1 interval
+    activation_time = int(interval / cycle)
 
     # do sanity check to see if the requirement for runtime distribution was met
-    if ((activation_time == len(sensor_reading)) and (sum(sensor_reading) <= cycle_output)):
+    if ((activation_time == len(sensor_reading)) and (sum(sensor_reading) <= interval_output)):
 
         # initialize the problem as a model with maximization target
         model = pulp.LpProblem("Runtime distribution", pulp.LpMaximize)
@@ -19,7 +19,7 @@ def compute(interval1, interval2, sensor_reading, actuator_spec, cycle_output, i
         runtime1 = [0] * activation_time
         runtime2 = [0] * activation_time
         # initialize the array to store the balanced distribution calculation
-        runtime3 = [interval_output] * activation_time
+        runtime3 = [cycle_output] * activation_time
 
         # for every element in the runtime1 array
         for i in range(len(runtime1)):
@@ -31,7 +31,7 @@ def compute(interval1, interval2, sensor_reading, actuator_spec, cycle_output, i
         for j in range(len(runtime2)):
 
             # multiply the element with the actuator_spec
-            runtime2[j] = runtime1[j] * actuator_spec
+            runtime2[j] = runtime1[j] * actuator_specification
 
         # for every element in the runtime3 array
         for k in range(len(runtime3)):
@@ -42,7 +42,7 @@ def compute(interval1, interval2, sensor_reading, actuator_spec, cycle_output, i
         # set the objective function
         model += sum(runtime2), "Runtime"
         # set the output constraint
-        model += sum(runtime2) <= (cycle_output - sum(sensor_reading))
+        model += sum(runtime2) <= (interval_output - sum(sensor_reading))
         # for every element in the runtime1
         for l in range(len(runtime1)):
 
@@ -72,7 +72,7 @@ def compute(interval1, interval2, sensor_reading, actuator_spec, cycle_output, i
             return True
 
         # when total of sensor reading is over the limit
-        if (sum(sensor_reading) <= cycle_output):
+        if (sum(sensor_reading) <= interval_output):
 
             # return false; schedule cannot be created
             return False
