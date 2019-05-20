@@ -3,7 +3,7 @@
 ## Introduction
 
 <p align = "center">
-  <img src = "https://raw.githubusercontent.com/hafiz-kamilin/auto-scheduling/master/pictures/1.png" width = "900" height = "388"/>
+  <img src = "https://raw.githubusercontent.com/hafiz-kamilin/auto-scheduling/master/pictures/1.png" width = "900" height = "360"/>
 </p>
 
 This is an example concept that show IoT type of sensors and actuators can be scheduled automatically based on parameters and constraints specified by the system designer. The schedule load distribution is optimized by using the Linear Programming method.
