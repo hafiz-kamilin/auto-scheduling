@@ -8,45 +8,45 @@ import random
 def sensor(interval1, interval2):
 
     # initialize an empty array
-    precipitation = []
-    # max total precipitation in one weeks is 40 [mm]
+    array = []
+    # max total array in interval1 is 40
     max = 40
-    # initialize rain
-    rain = 0
+    # initialize number
+    number = 0
     # initialize counter
     i = 0
 
-    # fill the empty array with randomized precipitation (rain) [mm]
+    # fill the empty array with randomized array (number)
     while (i < int(interval1 / interval2)):
 
         # toss the coin, if it is head
         if (random.randint(0, 1) == 0):
 
-            # not raining
-            precipitation.append(0)
+            # element is 0
+            array.append(0)
 
-        # if tail, generate random number of precipitation
+        # if tail, generate random number of array
         else:
 
             # as long max is not 0
             if (max != 0):
 
-                # randomize the precipitation
-                rain = random.randint(1, max)
+                # element is randomized
+                number = random.randint(1, max)
             
             # else
             else:
                 
-                # no rain
-                rain = 0
+                # no number
+                number = 0
 
             # update the max ceiling
-            max -= rain
-            # raining
-            precipitation.append(rain)
+            max -= number
+            # append the number
+            array.append(number)
 
         # increase the counter
         i += 1
 
     # return the result
-    return precipitation
+    return array
