@@ -284,4 +284,4 @@ if __name__ == '__main__':
         # show the computation result
         print ("  Auto-scheduling runtime = %s [minute]" % out_c) 
         print ("  Total volume = %s [L]" % int(sum(out_c) * actuator_c))
-        print ("  Saved water = %s [L]" % int(weeklyoutput_c - sum(out_c) * actuator_c))
+        print ("  Saved water = %s [L]\n" % int(weeklyoutput_c - sum(out_c) * actuator_c))
