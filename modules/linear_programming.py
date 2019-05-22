@@ -5,13 +5,13 @@
 import pulp
 
 # function to generate runtime distribution
-def compute(interval, cycle, sensor_reading, actuator_specification, interval_output, cycle_output):
+def compute(interval, cycle, sensor_output, sensor_constraint, actuator_specification, interval_output, cycle_output):
 
     # calculate how many time cycle will be activated in 1 interval
     activation_time = int(interval / cycle)
 
     # do sanity check to see if the requirement for runtime distribution was met
-    if ((activation_time == len(sensor_reading)) and (sum(sensor_reading) <= interval_output)):
+    if ((activation_time == len(sensor_output)) and (sum(sensor_output) <= interval_output)):
 
         # initialize the problem as a model with maximization target
         model = pulp.LpProblem("Runtime distribution", pulp.LpMaximize)
@@ -37,12 +37,12 @@ def compute(interval, cycle, sensor_reading, actuator_specification, interval_ou
         for k in range(len(runtime3)):
 
             # calculate the difference
-            runtime3[k] -= sensor_reading[k]
+            runtime3[k] -= sensor_constraint[k]
 
         # set the objective function
         model += sum(runtime2), "Runtime"
         # set the output constraint
-        model += sum(runtime2) <= (interval_output - sum(sensor_reading))
+        model += sum(runtime2) <= (interval_output - sum(sensor_output))
         # for every element in the runtime1
         for l in range(len(runtime1)):
 
@@ -66,13 +66,13 @@ def compute(interval, cycle, sensor_reading, actuator_specification, interval_ou
     else:
 
         # when wrong parameters are parsed
-        if (activation_time != len(sensor_reading)):
+        if (activation_time != len(sensor_constraint)):
 
             # return true; user need to rework on their input
             return True
 
         # when total of sensor reading is over the limit
-        if (sum(sensor_reading) <= interval_output):
+        if (sum(sensor_output) <= interval_output):
 
             # return false; schedule cannot be created
             return False
