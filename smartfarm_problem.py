@@ -21,9 +21,9 @@ import pulp
     #########
 
     We assume that each areas have only one sprinkler and the sprinkler'S output are;
-    - area (a) have  5 [L/m] 
-    - area (b) have 20 [L/m]
-    - area (c) have 13 [L/m]
+    - area (a) have  5 [L/min] 
+    - area (b) have 20 [L/min]
+    - area (c) have 13 [L/min]
 
     We assume one tomato tree that take 0.5 [m^2] of space need 3.4 [L] in one day, thus;
     - area (a) need 34.0 [L]
@@ -170,7 +170,7 @@ if __name__ == '__main__':
     # time interval for every loop is 1 [day]
     interval2 = 1
     # weather forecast precipitation for 7 [day] # in [mm] format
-    forecast = sensor(interval1, interval2)
+    forecast = [21, 15, 2, 1, 1, 0, 0] # sensor(interval1, interval2)
     # show the user the randomized weather forecast
     print ("\nRandomized weather forecast in one week is: %s [mm]" % forecast)
 
