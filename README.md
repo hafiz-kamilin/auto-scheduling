@@ -17,8 +17,7 @@ This is an example concept that show IoT type of sensors and actuators can be sc
 
 ## Note
 
-1. For generalized example, check the [./modules/linear_programming.py](https://github.com/hafiz-kamilin/auto-scheduling/blob/master/modules/linear_programming.py) and [./modules/random_generator.py](https://github.com/hafiz-kamilin/auto-scheduling/blob/master/modules/random_generator.py) to see the Python modules implementation.
-2. This is a proprietary code written for IEEE GCCE 2019 submittion and it serve as a proof of feasibility in deployement.
+For generalized example, check the [./modules/linear_programming.py](https://github.com/hafiz-kamilin/auto-scheduling/blob/master/modules/linear_programming.py) and [./modules/random_generator.py](https://github.com/hafiz-kamilin/auto-scheduling/blob/master/modules/random_generator.py) to see the Python modules implementation.
 
 ## Acknowledgement
 
