@@ -224,7 +224,7 @@ if __name__ == '__main__':
         print ("  Auto-scheduling runtime = %s [minute]" % out_a)
         print ("  Area = %s [m^2], Spec = %s [L/m]" % (area_a, actuator_a))
         print ("  Total volume = %s [L]" % int(sum(out_a) * actuator_a))
-        print ("  Saved water = %s [L]" % int(cycleoutput_a - sum(out_a) * actuator_a))
+        # print ("  Saved water = %s [L]" % int(cycleoutput_a - sum(out_a) * actuator_a))
 
     #######################################################################################
 
@@ -276,7 +276,7 @@ if __name__ == '__main__':
         print ("  Auto-scheduling runtime = %s [minute]" % out_b)
         print ("  Area = %s [m^2], Spec = %s [L/m]" % (area_b, actuator_b))
         print ("  Total volume = %s [L]" % int(sum(out_b) * actuator_b))
-        print ("  Saved water = %s [L]" % int(cycleoutput_b - sum(out_b) * actuator_b))
+        # print ("  Saved water = %s [L]" % int(cycleoutput_b - sum(out_b) * actuator_b))
 
     #######################################################################################
 
@@ -328,4 +328,4 @@ if __name__ == '__main__':
         print ("  Auto-scheduling runtime = %s [minute]" % out_c)
         print ("  Area = %s [m^2], Spec = %s [L/m]" % (area_c, actuator_c))
         print ("  Total volume = %s [L]" % int(sum(out_c) * actuator_c))
-        print ("  Saved water = %s [L]\n" % int(cycleoutput_c - sum(out_c) * actuator_c))
+        # print ("  Saved water = %s [L]\n" % int(cycleoutput_c - sum(out_c) * actuator_c))
