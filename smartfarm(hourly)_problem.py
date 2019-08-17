@@ -170,7 +170,7 @@ if __name__ == '__main__':
     # time interval for every loop is 8 [hour] 
     interval2 = 8
     # hourly weather forecast precipitation for 4 [day] # in [mm] format
-    forecast = [4, 0, 4, 0, 3, 0, 2, 3, 5, 0, 0, 0] # sensor(interval1, interval2)
+    forecast = sensor(interval1, interval2)
     # show the user the randomized weather forecast
     print ("\nRandomized hourly weather forecast in 8 hours interval is: %s [mm]" % forecast)
 
