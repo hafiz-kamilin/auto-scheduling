@@ -21,14 +21,14 @@ import pulp
     #########
 
     We assume that each areas have only one sprinkler and the sprinkler'S output are;
-    - area (a) have  5 [L/min] 
-    - area (b) have 20 [L/min]
-    - area (c) have 13 [L/min]
+    - area (a) have  5 L/min 
+    - area (b) have 20 L/min
+    - area (c) have 13 L/min
 
     We assume one tomato tree that take 0.5 [m^2] of space need 3.4 [L] in one day, thus;
-    - area (a) need 34.0 [L]
-    - area (b) need 81.6 [L]
-    - area (c) need 27.2 [L]
+    - area (a) need 34.0 L
+    - area (b) need 81.6 L
+    - area (c) need 27.2 L
 
     We assume that the the system designer installed weather forecast sensor to calculate
     how much of water needed for irrigation. The precipitation is randomized
