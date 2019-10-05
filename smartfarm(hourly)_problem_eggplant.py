@@ -6,9 +6,9 @@ import random
 import pulp
 
 """
-[Smart Tomato Farm Problem]
+[Smart Eggplant Farm Problem]
 
-    Tomato farm is divided into 3 areas which is a, b and c due to the limitation on area covered
+    Eggplant farm is divided into 3 areas which is a, b and c due to the limitation on area covered
     by individual sprinkler. To find how long we should run the sprinkler, a linear
     programming calculation is used to optimize the sprinkler runtime.
 
@@ -21,14 +21,14 @@ import pulp
     #########
 
     We assume that each areas have only one sprinkler and the sprinkler'S output are;
-    - area (a) have  5 L/min 
-    - area (b) have 20 L/min
-    - area (c) have 13 L/min
+    - area (a) have  5 [L/min] 
+    - area (b) have 20 [L/min]
+    - area (c) have 13 [L/min]
 
-    We assume one tomato tree that take 0.5 [m^2] of space need 3.4 [L] in one day, thus;
-    - area (a) need 34.0 L
-    - area (b) need 81.6 L
-    - area (c) need 27.2 L
+    We assume one eggplant tree that take 0.6 [m^2] of space need 3.6 [L] in one day, thus;
+    - area (a) need  30 [L]
+    - area (b) need 120 [L]
+    - area (c) need  78 [L]
 
     We assume that the the system designer installed weather forecast sensor to calculate
     how much of water needed for irrigation. The precipitation is randomized
@@ -48,7 +48,7 @@ def sensor(interval1, interval2):
     # initialize an empty array
     precipitation = []
     # max total precipitation in one weeks is 27 [mm]
-    max = 27
+    max = 20
     # initialize rain
     rain = 0
     # initialize counter
@@ -157,7 +157,7 @@ def compute(interval1, interval2, sensor_vol, sensor_const, actuator_spec, cycle
             return True
 
         # when total of sensor_num reading is over the limit
-        if (sum(sensor_vol) <= cycle_output):
+        if (sum(sensor_vol) >= cycle_output):
 
             # return false; schedule cannot be created
             return False
@@ -199,9 +199,9 @@ if __name__ == '__main__':
         sensor_a2[i] = sensor_a1[i] / actuator_a
 
     # total output [L] that actuator (sprinkler) need to meet for every cycle
-    cycleoutput_a = (3.4 / 3) / 0.5 * area_a * interval1 / interval2
+    cycleoutput_a = (3.6 / 3) / 0.6 * area_a * interval1 / interval2
     # spread the target output [minute] to each activation time
-    intervaloutput_a = (3.4 / (3 * 0.5) * area_a) / actuator_a
+    intervaloutput_a = (3.6 / (3 * 0.6) * area_a) / actuator_a
     # compute the runtime schedule
     out_a = compute(interval1, interval2, sensor_a1, sensor_a2, actuator_a, cycleoutput_a, intervaloutput_a)
 
@@ -232,8 +232,8 @@ if __name__ == '__main__':
     print ("\nSchedule for sprinkler in area (b):")
     # meter square of area
     area_b = 30
-    # actuators capability sprinkler is 20 [L/m]
-    actuator_b = 20
+    # actuators capability sprinkler is 15 [L/m]
+    actuator_b = 15
     # initialize sensor_c1 and sensor_c2
     sensor_b1 = [0] * int(interval1 / interval2)
     sensor_b2 = [0] * int(interval1 / interval2)
@@ -251,9 +251,9 @@ if __name__ == '__main__':
         sensor_b2[i] = sensor_b1[i] / actuator_b
 
     # total output [L] that actuator (sprinkler) need to meet for every cycle
-    cycleoutput_b = (3.4 / 3) / 0.5 * area_b * interval1 / interval2
+    cycleoutput_b = (3.6 / 3) / 0.6 * area_b * interval1 / interval2
     # spread the target output [minute] to each activation time
-    intervaloutput_b = (3.4 / (3 * 0.5) * area_b) / actuator_b
+    intervaloutput_b = (3.6 / (3 * 0.6) * area_b) / actuator_b
     # compute the runtime schedule
     out_b = compute(interval1, interval2, sensor_b1, sensor_b2, actuator_b, cycleoutput_b, intervaloutput_b)
 
@@ -284,8 +284,8 @@ if __name__ == '__main__':
     print ("\nSchedule for sprinkler in area (c):")
     # meter square of area
     area_c = 10
-    # actuators capability sprinkler is 13 [L/m]
-    actuator_c = 13
+    # actuators capability sprinkler is 5 [L/m]
+    actuator_c = 5
     # initialize sensor_c1 and sensor_c2
     sensor_c1 = [0] * int(interval1 / interval2)
     sensor_c2 = [0] * int(interval1 / interval2)
@@ -303,9 +303,9 @@ if __name__ == '__main__':
         sensor_c2[i] = sensor_c1[i] / actuator_c
 
     # total output [L] that actuator (sprinkler) need to meet for every cycle
-    cycleoutput_c = (3.4 / 3) / 0.5 * area_c * interval1 / interval2
+    cycleoutput_c = (3.6 / 3) / 0.6 * area_c * interval1 / interval2
     # spread the target output [minute] to each activation time
-    intervaloutput_c = (3.4 / (3 * 0.5) * area_c) / actuator_c
+    intervaloutput_c = (3.6 / (3 * 0.6) * area_c) / actuator_c
     # compute the runtime schedule
     out_c = compute(interval1, interval2, sensor_c1, sensor_c2, actuator_c, cycleoutput_c, intervaloutput_c)
 

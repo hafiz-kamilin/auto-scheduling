@@ -21,14 +21,14 @@ import pulp
     #########
 
     We assume that each areas have only one sprinkler and the sprinkler'S output are;
-    - area (a) have  5 [L/min] 
-    - area (b) have 20 [L/min]
-    - area (c) have 13 [L/min]
+    - area (a) have  5 L/min 
+    - area (b) have 20 L/min
+    - area (c) have 13 L/min
 
     We assume one tomato tree that take 0.5 [m^2] of space need 3.4 [L] in one day, thus;
-    - area (a) need 34.0 [L]
-    - area (b) need 81.6 [L]
-    - area (c) need 27.2 [L]
+    - area (a) need 34.0 L
+    - area (b) need 81.6 L
+    - area (c) need 27.2 L
 
     We assume that the the system designer installed weather forecast sensor to calculate
     how much of water needed for irrigation. The precipitation is randomized
@@ -38,8 +38,8 @@ import pulp
     To convert precipitation to Liter = (x [mm] / 1000) [m] * y [m^2] * 1000 [L/m^3]  
 
     Extra parameter to create the schedule;
-    - the schedule span for 1 week
-    - sprinkler operate once for 1 day
+    - the schedule span for 4 days
+    - sprinkler operate once for every 8 hours
 
 """
 # create a random sensor input for the span of interval1
@@ -47,8 +47,8 @@ def sensor(interval1, interval2):
 
     # initialize an empty array
     precipitation = []
-    # max total precipitation in one weeks is 40 [mm]
-    max = 40
+    # max total precipitation in one weeks is 27 [mm]
+    max = 20
     # initialize rain
     rain = 0
     # initialize counter
@@ -90,13 +90,13 @@ def sensor(interval1, interval2):
     return precipitation
 
 # function to generate runtime distribution
-def compute(interval1, interval2, sensor_vol, sensor_const, actuator_spec, weekly_output, daily_output):
+def compute(interval1, interval2, sensor_vol, sensor_const, actuator_spec, cycle_output, interval_output):
 
     # calculate how many time interval2 will be activated in 1 interval1
     activation_time = int(interval1 / interval2)
 
     # do sanity check to see if the requirement for runtime distribution was met
-    if ((activation_time == len(sensor_vol)) and (sum(sensor_vol) <= weekly_output)):
+    if ((activation_time == len(sensor_vol)) and (sum(sensor_vol) <= cycle_output)):
 
         # initialize the problem as a model with maximization target
         model = pulp.LpProblem("Runtime distribution", pulp.LpMaximize)
@@ -104,7 +104,7 @@ def compute(interval1, interval2, sensor_vol, sensor_const, actuator_spec, weekl
         runtime1 = [0] * activation_time
         runtime2 = [0] * activation_time
         # initialize the array to store the balanced distribution calculation
-        runtime3 = [daily_output] * activation_time
+        runtime3 = [interval_output] * activation_time
 
         # for every element in the runtime1 array
         for i in range(len(runtime1)):
@@ -127,7 +127,7 @@ def compute(interval1, interval2, sensor_vol, sensor_const, actuator_spec, weekl
         # set the objective function
         model += sum(runtime2), "Runtime"
         # set the output constraint
-        model += sum(runtime2) <= (weekly_output - sum(sensor_vol))
+        model += sum(runtime2) <= (cycle_output - sum(sensor_vol))
         # for every element in the runtime1
         for l in range(len(runtime1)):
 
@@ -157,7 +157,7 @@ def compute(interval1, interval2, sensor_vol, sensor_const, actuator_spec, weekl
             return True
 
         # when total of sensor_num reading is over the limit
-        if (sum(sensor_vol) <= weekly_output):
+        if (sum(sensor_vol) >= cycle_output):
 
             # return false; schedule cannot be created
             return False
@@ -165,14 +165,14 @@ def compute(interval1, interval2, sensor_vol, sensor_const, actuator_spec, weekl
 # initiator
 if __name__ == '__main__':
 
-    # time interval for 1 cycle is 7 [day]
-    interval1 = 7
-    # time interval for every loop is 1 [day]
-    interval2 = 1
-    # weather forecast precipitation for 7 [day] # in [mm] format
+    # time interval for 1 cycle is 4 [day] = 96 [hour]
+    interval1 = 96
+    # time interval for every loop is 8 [hour] 
+    interval2 = 8
+    # hourly weather forecast precipitation for 4 [day] # in [mm] format
     forecast = sensor(interval1, interval2)
     # show the user the randomized weather forecast
-    print ("\nRandomized weather forecast in one week is: %s [mm]" % forecast)
+    print ("\nRandomized hourly weather forecast in 8 hours interval is: %s [mm]" % forecast)
 
     #######################################################################################
 
@@ -199,11 +199,11 @@ if __name__ == '__main__':
         sensor_a2[i] = sensor_a1[i] / actuator_a
 
     # total output [L] that actuator (sprinkler) need to meet for every cycle
-    weeklyoutput_a = 3.4 / 0.5 * area_a * interval1
+    cycleoutput_a = (3.4 / 3) / 0.5 * area_a * interval1 / interval2
     # spread the target output [minute] to each activation time
-    dailyoutput_a = (3.4 / 0.5 * area_a) / actuator_a
+    intervaloutput_a = (3.4 / (3 * 0.5) * area_a) / actuator_a
     # compute the runtime schedule
-    out_a = compute(interval1, interval2, sensor_a1, sensor_a2, actuator_a, weeklyoutput_a, dailyoutput_a)
+    out_a = compute(interval1, interval2, sensor_a1, sensor_a2, actuator_a, cycleoutput_a, intervaloutput_a)
 
     # if out_a return true instead of an array
     if (out_a == True):
@@ -224,7 +224,7 @@ if __name__ == '__main__':
         print ("  Auto-scheduling runtime = %s [minute]" % out_a)
         print ("  Area = %s [m^2], Spec = %s [L/m]" % (area_a, actuator_a))
         print ("  Total volume = %s [L]" % int(sum(out_a) * actuator_a))
-        print ("  Saved water = %s [L]" % int(weeklyoutput_a - sum(out_a) * actuator_a))
+        # print ("  Saved water = %s [L]" % int(cycleoutput_a - sum(out_a) * actuator_a))
 
     #######################################################################################
 
@@ -251,11 +251,11 @@ if __name__ == '__main__':
         sensor_b2[i] = sensor_b1[i] / actuator_b
 
     # total output [L] that actuator (sprinkler) need to meet for every cycle
-    weeklyoutput_b = 3.4 / 0.5 * area_b * interval1
+    cycleoutput_b = (3.4 / 3) / 0.5 * area_b * interval1 / interval2
     # spread the target output [minute] to each activation time
-    dailyoutput_b = (3.4 / 0.5 * area_b) / actuator_b
+    intervaloutput_b = (3.4 / (3 * 0.5) * area_b) / actuator_b
     # compute the runtime schedule
-    out_b = compute(interval1, interval2, sensor_b1, sensor_b2, actuator_b, weeklyoutput_b, dailyoutput_b)
+    out_b = compute(interval1, interval2, sensor_b1, sensor_b2, actuator_b, cycleoutput_b, intervaloutput_b)
 
     # if out_b return true instead of an array
     if (out_b == True):
@@ -276,7 +276,7 @@ if __name__ == '__main__':
         print ("  Auto-scheduling runtime = %s [minute]" % out_b)
         print ("  Area = %s [m^2], Spec = %s [L/m]" % (area_b, actuator_b))
         print ("  Total volume = %s [L]" % int(sum(out_b) * actuator_b))
-        print ("  Saved water = %s [L]" % int(weeklyoutput_b - sum(out_b) * actuator_b))
+        # print ("  Saved water = %s [L]" % int(cycleoutput_b - sum(out_b) * actuator_b))
 
     #######################################################################################
 
@@ -303,11 +303,11 @@ if __name__ == '__main__':
         sensor_c2[i] = sensor_c1[i] / actuator_c
 
     # total output [L] that actuator (sprinkler) need to meet for every cycle
-    weeklyoutput_c = 3.4 / 0.5 * area_c * interval1
+    cycleoutput_c = (3.4 / 3) / 0.5 * area_c * interval1 / interval2
     # spread the target output [minute] to each activation time
-    dailyoutput_c = (3.4 / 0.5 * area_c) / actuator_c
+    intervaloutput_c = (3.4 / (3 * 0.5) * area_c) / actuator_c
     # compute the runtime schedule
-    out_c = compute(interval1, interval2, sensor_c1, sensor_c2, actuator_c, weeklyoutput_c, dailyoutput_c)
+    out_c = compute(interval1, interval2, sensor_c1, sensor_c2, actuator_c, cycleoutput_c, intervaloutput_c)
 
     # if out_c return true instead of an array
     if (out_c == True):
@@ -328,4 +328,4 @@ if __name__ == '__main__':
         print ("  Auto-scheduling runtime = %s [minute]" % out_c)
         print ("  Area = %s [m^2], Spec = %s [L/m]" % (area_c, actuator_c))
         print ("  Total volume = %s [L]" % int(sum(out_c) * actuator_c))
-        print ("  Saved water = %s [L]\n" % int(weeklyoutput_c - sum(out_c) * actuator_c))
+        # print ("  Saved water = %s [L]\n" % int(cycleoutput_c - sum(out_c) * actuator_c))
